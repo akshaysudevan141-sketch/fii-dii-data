@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const compression = require('compression');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
@@ -18,7 +17,7 @@ const io = new Server(server, {
     }
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(process.cwd(), 'data');
 
 // ── State for Monitoring ─────────────────────────────────────────────────────
@@ -32,7 +31,6 @@ const fetchStatus = {
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors());
-app.use(compression()); // Gzip all responses
 
 // Security Headers
 app.use((req, res, next) => {
@@ -204,26 +202,34 @@ cron.schedule('*/15 3-10 * * 1-5', () => runFetchTask("Cron Intra-day"));
 cron.schedule('45 10 * * 1-5', () => runFetchTask("Cron Post-market-1"));
 cron.schedule('0 12 * * 1-5', () => runFetchTask("Cron Post-market-2"));
 
-// ── Start ─────────────────────────────────────────────────────────────────────
-server.listen(PORT, async () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+// ── Start Server ──────────────────────────────────────────────────────────────
+server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
     
-    // Startup Backfill: Check if stale
-    try {
-        const db = await getDB();
-        const latest = await db.get('SELECT date FROM flows ORDER BY rowid DESC LIMIT 1');
-        await db.close();
+    // Defer non-critical startup tasks for 5 seconds to ensure server is fully ready
+    setTimeout(async () => {
+        try {
+            const db = await getDB();
+            const lastLog = await db.get("SELECT ts FROM fetch_logs WHERE success = 1 ORDER BY ts DESC LIMIT 1");
+            await db.close();
 
-        const todayStr = new Date().toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', timeZone:'Asia/Kolkata' }).replace(/ /g, '-');
-        let needsFetch = !latest || (latest.date !== todayStr && new Date().getUTCHours() >= 4);
+            const lastFetch = lastLog ? new Date(lastLog.ts) : new Date(0);
+            const staleMinutes = (new Date() - lastFetch) / (1000 * 60);
+            const isMarketTime = (() => {
+                const now = new Date();
+                const day = now.getUTCDay(); // 0 is Sunday, 6 is Saturday
+                const hour = now.getUTCHours() + 5.5; // Approx IST
+                return day >= 1 && day <= 5 && hour >= 9 && hour <= 16;
+            })();
 
-        if (needsFetch) {
-            console.log("ℹ️ Startup backfill triggered...");
-            await runFetchTask("Startup");
+            if (staleMinutes > 30 && isMarketTime) {
+                console.log("ℹ️ Startup backfill triggered after safety delay...");
+                await fetchAndProcessData().catch(e => console.error("Backfill failed:", e.message));
+            }
+        } catch (err) {
+            console.error("⚠️ Deferred startup check failed:", err.message);
         }
-    } catch (err) {
-        console.error("⚠️ Startup backfill check failed:", err.message);
-    }
+    }, 5000);
 });
 
-module.exports = app;
+module.exports = app; // For Vercel/Serverless
