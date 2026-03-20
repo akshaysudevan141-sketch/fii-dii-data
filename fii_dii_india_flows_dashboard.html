@@ -360,14 +360,246 @@ tr:last-child td { border-bottom: none; }
   header { flex-direction: column; gap: 16px; }
   .h-right { display: flex; flex-direction: column; width: 100%; align-items: flex-start; }
 }
+
+/* ── TABLET (≤ 768px) ── */
 @media (max-width: 768px) {
+  html, body { overflow-x: hidden; }
+  .wrap { padding: 20px 14px 100px; max-width: 100vw; overflow-x: hidden; }
   .grid-hero, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
-  .tabs-wrap { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 8px; }
-  .card, .card-glass { padding: 16px; }
-  .num-xl { font-size: 32px; }
-  .num-l { font-size: 26px; }
-  .cam-btn { display: none; } /* Hide export on small mobile targets */
-  .sector-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .card, .card-glass { padding: 16px; overflow: hidden; }
+  .num-xl { font-size: 28px; }
+  .num-l { font-size: 22px; }
+  .num-m { font-size: 18px; }
+  .num-s { font-size: 15px; }
+  .cam-btn { display: none; }
+  .sector-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+
+  /* ─ Header ─ */
+  header { flex-direction: column; gap: 12px; }
+  .h-title { font-size: 22px; }
+  .h-sub { font-size: 10px; }
+  .header-icon { width: 38px; height: 38px; font-size: 18px; border-radius: 10px; }
+  .hdr-btn { padding: 0 10px; font-size: 10px; height: 32px; }
+  .h-right { width: 100%; }
+  .h-right > div { flex-wrap: wrap; justify-content: flex-start !important; gap: 6px !important; }
+
+  /* ─── FLOATING NAVBAR (CRITICAL MOBILE FIX) ─── */
+  .tabs-wrap {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    display: flex !important;
+    justify-content: stretch;
+    padding: 8px 6px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    gap: 2px;
+    overflow: visible;
+    white-space: nowrap;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+    z-index: 9999;
+  }
+  .tab {
+    flex: 1;
+    padding: 10px 4px;
+    font-size: 11px;
+    gap: 4px;
+    justify-content: center;
+    text-align: center;
+    border-radius: 12px;
+    min-height: 44px; /* iOS touch target */
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .tab .tab-txt { display: none; }
+  .tab span:first-child { font-size: 18px; display: block; }
+
+  /* ─ Hero Card FII/DII Layout ─ */
+  .hero-nums { flex-direction: column !important; gap: 16px !important; align-items: flex-start !important; }
+  .hero-nums > div:last-child { text-align: left !important; }
+
+  /* ─ Inline Grid Stat Rows (4-col → 2-col) ─ */
+  #matrix-stats-row,
+  #hist-stats-row { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+
+  /* ─ F&O Two-Column → Single ─ */
+  .fno-grid { grid-template-columns: 1fr !important; }
+
+  /* ─ Heatmap cells ─ */
+  .cal-cell { width: 11px; height: 11px; border-radius: 3px; }
+  #fii-heatmap, #dii-heatmap { gap: 4px !important; flex-wrap: wrap !important; }
+
+  /* ─ Chart Heights ─ */
+  .chart-canvas-wrap { height: 280px !important; }
+  #fno-chart-wrap { height: 220px !important; }
+
+  /* ─ Sub-tabs overflow ─ */
+  .sub-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; max-width: 100%; flex-wrap: nowrap !important; display: inline-flex !important; }
+
+  /* ─ Filter/Date Row ─ */
+  .filter-row { flex-wrap: wrap !important; gap: 6px !important; }
+  .filter-row > div { margin-left: 0 !important; width: 100%; }
+
+  /* ─ Hero banner text ─ */
+  .hero-banner { padding: 24px 16px !important; }
+  .hero-banner-title { font-size: 18px !important; }
+  .hero-banner-subtitle { font-size: 12px !important; line-height: 1.5 !important; }
+
+  /* ─ Table cells ─ */
+  td { padding: 8px 10px; font-size: 12px; }
+  th { padding: 8px 10px; font-size: 9px; }
+  .tbl-wrap { border-radius: 8px; }
+  .td-bar-wrap { width: 40px; margin-left: 6px; }
+
+  /* ─ Status pill ─ */
+  .status-pill span { font-size: 9px; }
+
+  /* ─ Momentum badge ─ */
+  .mom-badge { font-size: 10px; padding: 3px 8px; }
+
+  /* ─── DOCS TAB MOBILE ─── */
+  #t-docs > div { padding-bottom: 20px !important; }
+  #t-docs .card { padding: 18px !important; margin-bottom: 16px !important; }
+  #t-docs img { border-radius: 8px !important; margin-bottom: 14px !important; width: 100% !important; height: auto !important; }
+  #t-docs h3 { font-size: 16px !important; padding-bottom: 10px !important; }
+  #t-docs p { font-size: 13px !important; line-height: 1.6 !important; }
+  #t-docs li { font-size: 13px !important; line-height: 1.6 !important; }
+  #t-docs ul { padding-left: 0 !important; }
+  /* Docs info grid items */
+  #t-docs [style*="grid-template-columns"] { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+  /* ─── SECTOR TAB MOBILE ─── */
+  #t-sector .card { padding: 16px !important; }
+  .sector-card { padding: 14px; min-height: 150px; }
+  .sector-card:hover { transform: translateY(-2px) scale(1.01); }
+  .sc-name { font-size: 14px; }
+  .sc-fortnight { font-size: 10px; }
+  .sc-aum-pct { font-size: 10px; }
+  .sc-1y-val { font-size: 14px; }
+  /* Sector sort buttons wrap */
+  #t-sector .filter-btn { font-size: 10px; padding: 4px 8px; }
+
+  /* ─ Card hover: reduce motion on touch ─ */
+  .card:hover, .card-glass:hover { transform: translateY(-1px); }
+
+  /* ─ Methodology banner ─ */
+  .methodology-banner { flex-direction: column !important; font-size: 12px !important; padding: 12px 14px !important; }
+
+  /* ─ Heatmap legend ─ */
+  .heatmap-legend { flex-direction: column !important; gap: 8px !important; font-size: 10px !important; padding-top: 14px !important; margin-top: 20px !important; }
+
+  /* ─ F&O header ─ */
+  .fno-header { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+
+  /* ─ Chart header ─ */
+  .chart-header { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+
+  /* ─ Logo glow - contain ─ */
+  .logo-glow { display: none; }
+  .ambient-orb { opacity: 0.08; }
+}
+
+/* ── SMALL MOBILE (≤ 480px) ── */
+@media (max-width: 480px) {
+  .wrap { padding: 14px 10px 90px; }
+
+  /* ─ Navbar: compact emoji mode ─ */
+  .tabs-wrap { padding: 6px 4px; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)); border-radius: 14px 14px 0 0; }
+  .tab { padding: 8px 2px; min-height: 44px; border-radius: 10px; }
+  .tab span:first-child { font-size: 20px; }
+
+  /* ─ Header ─ */
+  .h-title { font-size: 18px; letter-spacing: -0.8px; }
+  .header-icon { width: 34px; height: 34px; font-size: 16px; border-radius: 8px; }
+  .header-left { gap: 8px; }
+  .hdr-btn { font-size: 9px; height: 28px; padding: 0 8px; }
+
+  /* ─ Hero Card ─ */
+  .num-xl { font-size: 22px; letter-spacing: -1px; }
+  .num-l { font-size: 18px; }
+  .num-m { font-size: 15px; }
+  .num-s { font-size: 13px; }
+  .card, .card-glass { padding: 12px; border-radius: 10px; }
+
+  /* ─ Force inline stat grids to single col ─ */
+  #matrix-stats-row,
+  #hist-stats-row { grid-template-columns: 1fr !important; }
+
+  /* ─ Hero card internal layout ─ */
+  .c-title { font-size: 12px; }
+  .c-sub { font-size: 10px; }
+  .c-head { flex-direction: column; gap: 6px; }
+
+  /* ─ Heatmap cells smaller ─ */
+  .cal-cell { width: 9px; height: 9px; border-radius: 2px; }
+  #fii-heatmap, #dii-heatmap { gap: 3px !important; margin-top: 16px !important; }
+  .cal-cell:hover::after { font-size: 9px; padding: 4px 6px; }
+
+  /* ─ Tables: compact ─ */
+  td { padding: 6px 8px; font-size: 11px; }
+  th { padding: 6px 8px; font-size: 8px; letter-spacing: 0.4px; }
+  .td-bar-wrap { display: none; }
+
+  /* ─ Chart Heights ─ */
+  .chart-canvas-wrap { height: 220px !important; }
+  #fno-chart-wrap { height: 180px !important; }
+
+  /* ─ Ambient orbs: hide for performance ─ */
+  .ambient-orb { display: none; }
+
+  /* ─── SECTOR TAB ─── */
+  .sector-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .sector-card { min-height: 130px; padding: 12px; }
+  .sc-name { font-size: 13px; }
+  .sc-1y-val { font-size: 12px; }
+  .sc-chart-wrapper { min-height: 40px; margin: 8px 0; }
+  #t-sector .card { margin-bottom: 12px !important; }
+  /* Sort button row */
+  #t-sector [style*="gap:8px"] { gap: 4px !important; }
+  #t-sector .filter-btn { font-size: 9px; padding: 3px 6px; min-height: 30px; }
+  /* Sector chart card */
+  #sec-chart-card { padding: 14px !important; }
+  #sec-chart-card .sub-tabs { font-size: 10px; }
+
+  /* ─ Buttons: ensure touch targets ─ */
+  .btn-x, .btn-primary, .filter-btn, .s-tab { min-height: 36px; }
+
+  /* ─ Hero action buttons ─ */
+  .h-right button { font-size: 10px !important; padding: 6px 10px !important; }
+
+  /* ─── DOCS TAB ─── */
+  #t-docs > div { max-width: 100% !important; padding: 0 !important; padding-bottom: 20px !important; }
+  #t-docs .card { padding: 14px !important; margin-bottom: 12px !important; }
+  #t-docs h3 { font-size: 14px !important; margin-bottom: 10px !important; }
+  #t-docs p { font-size: 12px !important; }
+  #t-docs li { font-size: 12px !important; margin-bottom: 6px !important; }
+  #t-docs strong { font-size: 13px !important; }
+  /* Docs hero */
+  #t-docs .hero-banner { padding: 20px 14px !important; }
+  #t-docs .hero-banner-title { font-size: 16px !important; }
+  #t-docs .hero-banner-subtitle { font-size: 11px !important; }
+  /* Docs utility grid */
+  #t-docs [style*="grid-template-columns"] { grid-template-columns: 1fr !important; gap: 10px !important; }
+  #t-docs [style*="background:var(--l2)"] { padding: 12px !important; border-radius: 8px !important; }
+
+  /* ─ F&O section labels ─ */
+  .fno-grid > div { padding: 12px !important; }
+  .fno-header > div:first-child { width: 100%; }
+  .fno-header [style*="display:flex"][style*="gap:10px"] { flex-wrap: wrap !important; }
+
+  /* ─ Chart legend ─ */
+  .chart-legend { flex-direction: column !important; gap: 8px !important; padding: 12px !important; }
+  .chart-legend > span:last-child { margin-left: 0 !important; }
+
+  /* ─ Hero banner ─ */
+  .hero-banner { padding: 20px 14px !important; }
+  .hero-banner > div:first-child { font-size: 28px !important; margin-bottom: 8px !important; } /* emoji */
+  .hero-banner-title { font-size: 16px !important; margin-bottom: 4px !important; }
+  .hero-banner-subtitle { font-size: 11px !important; }
 }
 
 /* ── Sector Grid & Cards (Screener.in Style) ── */
@@ -586,7 +818,7 @@ tr:last-child td { border-bottom: none; }
         <div class="mom-badge mb-bear" id="heroBadge">Aggressive Selling</div>
       </div>
       
-      <div style="display:flex; justify-content:space-between; margin-top:32px; align-items:flex-end;">
+      <div class="hero-nums" style="display:flex; justify-content:space-between; margin-top:32px; align-items:flex-end;">
         <div>
           <div style="font-size:13px; color:var(--t4); font-weight:700; margin-bottom:6px; letter-spacing:0.5px;">FII / FPI NET</div>
           <div class="num-xl t-red" id="lFii">-₹10,724 Cr</div>
@@ -708,7 +940,7 @@ tr:last-child td { border-bottom: none; }
       <!-- Generated via JS -->
       <div id="fii-heatmap" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:32px;"></div>
       
-      <div style="margin-top:32px; padding-top:20px; border-top:1px solid var(--sep2); display:flex; justify-content:space-between; font-size:11px; color:var(--t4); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+      <div class="heatmap-legend" style="margin-top:32px; padding-top:20px; border-top:1px solid var(--sep2); display:flex; justify-content:space-between; font-size:11px; color:var(--t4); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
         <div style="display:flex; align-items:center; gap:10px;">
           <span>Extreme Dump <span style="opacity:0.6; font-size:10px; text-transform:lowercase; font-weight:600;">(≤ -5k+ Cr)</span></span>
           <div style="display:flex; gap:4px;" title="Scale: 0 to -5,000+ Cr"><div class="cal-cell c-r4"></div><div class="cal-cell c-r3"></div><div class="cal-cell c-r2"></div><div class="cal-cell c-r1"></div></div>
@@ -726,7 +958,7 @@ tr:last-child td { border-bottom: none; }
       
       <div id="dii-heatmap" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:32px;"></div>
       
-      <div style="margin-top:32px; padding-top:20px; border-top:1px solid var(--sep2); display:flex; justify-content:space-between; font-size:11px; color:var(--t4); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+      <div class="heatmap-legend" style="margin-top:32px; padding-top:20px; border-top:1px solid var(--sep2); display:flex; justify-content:space-between; font-size:11px; color:var(--t4); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
         <div style="display:flex; align-items:center; gap:10px;">
           <span>Light Activity <span style="opacity:0.6; font-size:10px; text-transform:lowercase; font-weight:600;">(± 1k Cr)</span></span>
           <div style="display:flex; gap:4px;" title="Scale: -1k to +1k Cr"><div class="cal-cell c-r1"></div><div class="cal-cell c-g1"></div></div>
@@ -765,10 +997,10 @@ tr:last-child td { border-bottom: none; }
   <!-- TAB: DATA MATRIX -->
   <div id="t-matrix" class="panel">
     <!-- Hero Banner -->
-    <div class="card" style="margin-bottom:20px; text-align:center; padding:36px 32px; position:relative; overflow:hidden; border-left:4px solid var(--purple);">
+    <div class="card hero-banner" style="margin-bottom:20px; text-align:center; padding:36px 32px; position:relative; overflow:hidden; border-left:4px solid var(--purple);">
       <div style="font-size:36px; margin-bottom:12px;">🗄️</div>
-      <div style="font-size:22px; font-weight:800; color:var(--t1); letter-spacing:-0.5px; margin-bottom:6px;">Historical Flow Databases & Matrices</div>
-      <div style="font-size:13px; color:var(--t3); line-height:1.7; max-width:650px; margin:0 auto;">Complete institutional flow archive spanning daily sessions to calendar years. Filter, sort, and export raw FII/DII buy-sell data with visual magnitude bars.</div>
+      <div class="hero-banner-title" style="font-size:22px; font-weight:800; color:var(--t1); letter-spacing:-0.5px; margin-bottom:6px;">Historical Flow Databases & Matrices</div>
+      <div class="hero-banner-subtitle" style="font-size:13px; color:var(--t3); line-height:1.7; max-width:650px; margin:0 auto;">Complete institutional flow archive spanning daily sessions to calendar years. Filter, sort, and export raw FII/DII buy-sell data with visual magnitude bars.</div>
     </div>
 
     <!-- Summary Stats Row -->
@@ -807,13 +1039,13 @@ tr:last-child td { border-bottom: none; }
 
       <!-- DAILY -->
       <div id="s-daily" class="s-panel active">
-        <div style="display:flex; gap:8px; margin-bottom:10px; overflow-x:auto; flex-wrap:wrap; align-items:center;">
+        <div class="filter-row" style="display:flex; gap:8px; margin-bottom:10px; overflow-x:auto; flex-wrap:wrap; align-items:center;">
           <button class="filter-btn active" id="fBtn-all" onclick="filterDaily('all', this)">All Data</button>
           <button class="filter-btn" onclick="filterDaily('fii_sell', this)">FII Bloodbath (&lt; -₹5k Cr)</button>
           <button class="filter-btn" onclick="filterDaily('dii_buy', this)">DII Absorption (&gt; +₹5k Cr)</button>
           <button class="filter-btn" onclick="filterDaily('divergence', this)">Extreme Divergence</button>
         </div>
-        <div style="display:flex; gap:8px; margin-bottom:12px; overflow-x:auto; flex-wrap:wrap; align-items:center;">
+        <div class="filter-row" style="display:flex; gap:8px; margin-bottom:12px; overflow-x:auto; flex-wrap:wrap; align-items:center;">
           <label for="drFrom" style="font-size:11px; color:var(--t3); font-weight:600; letter-spacing:.5px;">FROM</label>
           <input type="date" id="drFrom" aria-label="Filter from date" title="Filter rows from this date" onchange="filterDaily('daterange',null)" style="background:var(--l1); border:1px solid var(--sep2); color:var(--t1); border-radius:6px; padding:4px 8px; font-size:12px; cursor:pointer;">
           <label for="drTo" style="font-size:11px; color:var(--t3); font-weight:600; letter-spacing:.5px;">TO</label>
@@ -868,10 +1100,10 @@ tr:last-child td { border-bottom: none; }
   <!-- TAB: CHARTS -->
   <div id="t-charts" class="panel">
     <!-- Hero Banner -->
-    <div class="card" style="margin-bottom:20px; text-align:center; padding:36px 32px; position:relative; overflow:hidden; border-left:4px solid var(--blue);">
+    <div class="card hero-banner" style="margin-bottom:20px; text-align:center; padding:36px 32px; position:relative; overflow:hidden; border-left:4px solid var(--blue);">
       <div style="font-size:36px; margin-bottom:12px;">📈</div>
-      <div style="font-size:22px; font-weight:800; color:var(--t1); letter-spacing:-0.5px; margin-bottom:6px;">Historical Flow Trends</div>
-      <div style="font-size:13px; color:var(--t3); line-height:1.7; max-width:600px; margin:0 auto;">Visualize FII & DII institutional flow trajectories across daily, weekly, monthly, and annual timeframes. Bars represent net capital movement in ₹ Crores.</div>
+      <div class="hero-banner-title" style="font-size:22px; font-weight:800; color:var(--t1); letter-spacing:-0.5px; margin-bottom:6px;">Historical Flow Trends</div>
+      <div class="hero-banner-subtitle" style="font-size:13px; color:var(--t3); line-height:1.7; max-width:600px; margin:0 auto;">Visualize FII & DII institutional flow trajectories across daily, weekly, monthly, and annual timeframes. Bars represent net capital movement in ₹ Crores.</div>
     </div>
 
     <!-- Quick Stats Row -->
@@ -901,7 +1133,7 @@ tr:last-child td { border-bottom: none; }
     <!-- Chart Card -->
     <div class="card" style="padding:24px; margin-bottom:16px;">
       <button class="cam-btn" onclick="exportDOM(this.parentNode, 'Flow_Charts')">📷 Export</button>
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--sep2); padding-bottom:16px; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+      <div class="chart-header" style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--sep2); padding-bottom:16px; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
         <div>
           <h2 style="font-size:16px; color:var(--t1); letter-spacing:-0.3px; margin:0;">📊 Institutional Flow Canvas</h2>
           <div style="font-size:11px; color:var(--t4); margin-top:4px;">Select a timeframe to adjust the chart granularity.</div>
@@ -916,10 +1148,10 @@ tr:last-child td { border-bottom: none; }
         </div>
       </div>
 
-      <div style="height:450px; position:relative; width:100%;"><canvas id="chHistory"></canvas></div>
+      <div class="chart-canvas-wrap" style="height:450px; position:relative; width:100%;"><canvas id="chHistory"></canvas></div>
 
       <!-- Enhanced Legend -->
-      <div style="margin-top:20px; padding:16px; border-top:1px solid var(--sep2); display:flex; gap:20px; flex-wrap:wrap; align-items:center;">
+      <div class="chart-legend" style="margin-top:20px; padding:16px; border-top:1px solid var(--sep2); display:flex; gap:20px; flex-wrap:wrap; align-items:center;">
         <div style="display:flex; align-items:center; gap:6px;">
           <div style="width:14px; height:14px; background:#FB3640; border-radius:3px;"></div>
           <span style="font-size:12px; font-weight:700; color:var(--t2);">FII / FPI Net Flow</span>
@@ -959,7 +1191,7 @@ tr:last-child td { border-bottom: none; }
       </div>
 
       <!-- Methodology Banner -->
-      <div style="background:var(--l2); border:1px solid var(--sep2); border-left:4px solid var(--primary); border-radius:8px; padding:14px 18px; margin-bottom:24px; font-size:13px; color:var(--t3); line-height:1.6; display:flex; gap:12px; align-items:flex-start;">
+      <div class="methodology-banner" style="background:var(--l2); border:1px solid var(--sep2); border-left:4px solid var(--primary); border-radius:8px; padding:14px 18px; margin-bottom:24px; font-size:13px; color:var(--t3); line-height:1.6; display:flex; gap:12px; align-items:flex-start;">
         <div style="font-size:16px; margin-top:2px;">ℹ️</div>
         <div>
           <strong style="color:var(--t1); display:block; margin-bottom:4px; font-size:14px;">How is this data calculated?</strong>
@@ -1024,16 +1256,16 @@ tr:last-child td { border-bottom: none; }
   <!-- TAB: F&O DERIVATIVES -->
   <div id="t-fno" class="panel">
     <!-- Hero Banner -->
-    <div class="card" style="margin-bottom:20px; text-align:center; padding:36px 32px; position:relative; overflow:hidden; border-left:4px solid var(--green);">
+    <div class="card hero-banner" style="margin-bottom:20px; text-align:center; padding:36px 32px; position:relative; overflow:hidden; border-left:4px solid var(--green);">
       <div style="font-size:36px; margin-bottom:12px;">🎲</div>
-      <div style="font-size:22px; font-weight:800; color:var(--t1); letter-spacing:-0.5px; margin-bottom:6px;">Derivatives Positioning (F&O)</div>
-      <div style="font-size:13px; color:var(--t3); line-height:1.7; max-width:650px; margin:0 auto;">Participant-wise Open Interest analysis across Index Futures, Stock Futures, Index Calls & Puts. Decode the institutional sentiment through long/short ratios.</div>
+      <div class="hero-banner-title" style="font-size:22px; font-weight:800; color:var(--t1); letter-spacing:-0.5px; margin-bottom:6px;">Derivatives Positioning (F&O)</div>
+      <div class="hero-banner-subtitle" style="font-size:13px; color:var(--t3); line-height:1.7; max-width:650px; margin:0 auto;">Participant-wise Open Interest analysis across Index Futures, Stock Futures, Index Calls & Puts. Decode the institutional sentiment through long/short ratios.</div>
     </div>
 
     <!-- F&O DERIVATIVES SECTION -->
     <div class="card" style="margin-bottom:24px; padding:24px;">
       <button class="cam-btn" onclick="exportDOM(this.parentNode, 'FNO_Derivatives')">📷 Export</button>
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--sep2); padding-bottom:14px; margin-bottom:20px;">
+      <div class="fno-header" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--sep2); padding-bottom:14px; margin-bottom:20px;">
         <div>
           <div style="font-size:15px; font-weight:700; color:var(--t1); letter-spacing:-0.2px; display:flex; gap:10px; align-items:center;">
             📊 Open Interest Breakdown
@@ -1044,7 +1276,7 @@ tr:last-child td { border-bottom: none; }
         <div class="mom-badge" id="faoSentiment">—</div>
       </div>
   
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div class="fno-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
         <!-- FII Column -->
         <div style="padding:16px; background:var(--l1); border-radius:10px; border:1px solid var(--sep2);">
           <div style="font-size:11px; font-weight:800; color:var(--blue); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--sep2);">FII / FPI Positioning</div>
@@ -1142,10 +1374,10 @@ tr:last-child td { border-bottom: none; }
     <div style="max-width:960px; margin:0 auto; padding-bottom:40px;">
 
       <!-- Hero Banner -->
-      <div class="card" style="margin-bottom:24px; text-align:center; padding:48px 32px; position:relative; overflow:hidden;">
+      <div class="card hero-banner" style="margin-bottom:24px; text-align:center; padding:48px 32px; position:relative; overflow:hidden;">
         <div style="font-size:40px; margin-bottom:16px;">📖</div>
-        <div style="font-size:26px; font-weight:800; color:var(--t1); letter-spacing:-0.5px; margin-bottom:8px;">Dashboard User Manual & Methodology</div>
-        <div style="font-size:14px; color:var(--t3); line-height:1.7; max-width:650px; margin:0 auto;">A comprehensive end-to-end guide on reading the flow indicators, understanding F&O position signals, and decoding the complex algorithms calculating Market Strength.</div>
+        <div class="hero-banner-title" style="font-size:26px; font-weight:800; color:var(--t1); letter-spacing:-0.5px; margin-bottom:8px;">Dashboard User Manual & Methodology</div>
+        <div class="hero-banner-subtitle" style="font-size:14px; color:var(--t3); line-height:1.7; max-width:650px; margin:0 auto;">A comprehensive end-to-end guide on reading the flow indicators, understanding F&O position signals, and decoding the complex algorithms calculating Market Strength.</div>
       </div>
 
       <!-- Overview Section -->
@@ -2164,16 +2396,25 @@ function postToX() {
 }
 
 /* ── LIVE AUTO-FETCH ── */
-const LOCAL_SERVER = 'http://localhost:5000';
-const IS_LOCAL = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-const AUTO_REFRESH_MS = 5 * 60 * 1000; // 5 minutes
+/** Smart refresh: 10 min during NSE publish window (5:30-8 PM IST, Mon-Fri), 30 min otherwise */
+function getRefreshInterval() {
+  const now = new Date();
+  const istHour = (now.getUTCHours() + 5) % 24 + (now.getUTCMinutes() + 30) / 60;
+  // Adjust for IST: UTC+5:30
+  const h = Math.floor(istHour);
+  const day = now.getUTCDay(); // 0=Sun, 6=Sat
+  const isWeekday = day >= 1 && day <= 5;
+  const isPublishWindow = isWeekday && istHour >= 17.5 && istHour <= 20; // 5:30 PM - 8:00 PM IST
+  return isPublishWindow ? 10 * 60 * 1000 : 30 * 60 * 1000; // 10 min vs 30 min
+}
 let nextRefreshAt = 0;
 let refreshTimer = null;
 
 function scheduleNextRefresh() {
   if (refreshTimer) clearTimeout(refreshTimer);
-  nextRefreshAt = Date.now() + AUTO_REFRESH_MS;
-  refreshTimer = setTimeout(() => fetchLiveNSE(false), AUTO_REFRESH_MS);
+  const interval = getRefreshInterval();
+  nextRefreshAt = Date.now() + interval;
+  refreshTimer = setTimeout(() => fetchLiveNSE(false), interval);
 }
 
 /* Live countdown ticker in the status pill */
@@ -2186,7 +2427,7 @@ function startCountdown() {
       const sec = Math.max(0, Math.round((nextRefreshAt - Date.now()) / 1000));
       const mm = String(Math.floor(sec / 60)).padStart(2, '0');
       const ss = String(sec % 60).padStart(2, '0');
-      sTxt.innerHTML = `LIVE &bull; Refresh in ${mm}:${ss}`;
+      sTxt.innerHTML = `LIVE &bull; REFRESH IN ${mm}:${ss}`;
     }
   }, 1000);
 }
@@ -2229,31 +2470,47 @@ async function fetchLiveNSE(isManual = false) {
 
   let success = false;
 
-  /* ── TIER 0: GitHub Actions auto-committed JSON (works for EVERYONE) ── */
-  if (!success) {
-    const dataSources = [
-      IS_LOCAL ? `${LOCAL_SERVER}/api/data` : null,                                // Local Express server
-      './data/latest.json',                                                         // GitHub Pages / same origin
-      'https://raw.githubusercontent.com/MrChartist/fii-dii-data/main/data/latest.json',  // Direct raw (CORS-safe)
-    ].filter(Boolean);
-    for (const src of dataSources) {
-      try {
-        const res = await fetch(`${src}?t=${Date.now()}`, { signal: AbortSignal.timeout(6000) });
-        if (res.ok) {
-          const d = await res.json();
-          if (d.date && d.fii_net !== undefined) {
-            await injectLiveRow(d);
-            scheduleNextRefresh();
-            success = true;
-            console.log('[SYNC] ✅ Live data from GitHub auto-update:', src);
-            break;
-          }
-        }
-      } catch (e) { /* try next */ }
-    }
+  /* ── Helper: check if a date string is "today" in IST ── */
+  function isToday(dateStr) {
+    if (!dateStr) return false;
+    const parsed = parseNSEDate(dateStr);
+    if (!parsed) return false;
+    const now = new Date();
+    // IST offset: UTC+5:30
+    const istNow = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+    return parsed.getUTCFullYear() === istNow.getUTCFullYear() &&
+           parsed.getUTCMonth() === istNow.getUTCMonth() &&
+           parsed.getUTCDate() === istNow.getUTCDate();
   }
 
-  /* ── TIER 1: Multiple CORS proxies ── */
+  /* ── TIER 0: Trigger server-side NSE fetch + read fresh data ── */
+  try {
+    // Step 1: Tell server to fetch fresh data from NSE
+    const refreshRes = await fetch('/api/refresh', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(12000)
+    });
+    if (refreshRes.ok) {
+      console.log('[SYNC] Server-side NSE fetch triggered');
+    }
+
+    // Step 2: Read the (now-updated) database
+    const dataRes = await fetch(`/api/data?t=${Date.now()}`, { signal: AbortSignal.timeout(6000) });
+    if (dataRes.ok) {
+      const d = await dataRes.json();
+      if (d.date && d.fii_net !== undefined) {
+        await injectLiveRow(d);
+        scheduleNextRefresh();
+        success = true;
+        console.log('[SYNC] ✅ Live data from server:', d.date, isToday(d.date) ? '(today)' : '(stale)');
+      }
+    }
+  } catch (e) {
+    console.log('[SYNC] Server fetch failed:', e.message);
+  }
+
+  /* ── TIER 1: CORS proxies (direct NSE, if server failed or data stale) ── */
   if (!success) {
     const nseUrl = 'https://www.nseindia.com/api/fiidiiTradeReact';
     const proxies = [
@@ -2266,7 +2523,6 @@ async function fetchLiveNSE(isManual = false) {
         const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
         if (!res.ok) continue;
         const raw = await res.json();
-        // allorigins wraps in {contents:...}, corsproxy.io returns directly
         const parsed = raw.contents ? JSON.parse(raw.contents) : raw;
         if (!Array.isArray(parsed) || parsed.length === 0) continue;
 
@@ -2296,16 +2552,39 @@ async function fetchLiveNSE(isManual = false) {
     }
   }
 
+  /* ── TIER 2: Static fallbacks (GitHub JSON) ── */
+  if (!success) {
+    const fallbacks = [
+      './data/latest.json',
+      'https://raw.githubusercontent.com/MrChartist/fii-dii-data/main/data/latest.json',
+    ];
+    for (const src of fallbacks) {
+      try {
+        const res = await fetch(`${src}?t=${Date.now()}`, { signal: AbortSignal.timeout(6000) });
+        if (res.ok) {
+          const d = await res.json();
+          if (d.date && d.fii_net !== undefined) {
+            await injectLiveRow(d);
+            scheduleNextRefresh();
+            success = true;
+            console.log('[SYNC] ✅ Fallback data from:', src);
+            break;
+          }
+        }
+      } catch (e) { /* try next */ }
+    }
+  }
+
   /* ── FAIL ── */
   if (!success) {
     console.warn('[SYNC] ⚠️ All sources failed — showing local archive.');
     const sPill = document.getElementById('sPill');
     const sTxt  = document.getElementById('sTxt');
     if (sPill) { sPill.className = 'status-pill err'; }
-    // Show 'start server' tip only when actually on localhost; GitHub visitors just see LOCAL ARCHIVE
-    const failMsg = (isManual && IS_LOCAL) ? 'LOCAL SERVER OFFLINE — Run: npm start' : 'LOCAL ARCHIVE';
+    const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    const failMsg = (isManual && isLocal) ? 'SERVER OFFLINE — Run: npm start' : 'LOCAL ARCHIVE';
     if (sTxt) { sTxt.innerHTML = failMsg; }
-    scheduleNextRefresh(); // retry anyway
+    scheduleNextRefresh();
   }
 
   if (isManual && btn) {

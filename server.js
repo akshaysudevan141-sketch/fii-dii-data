@@ -169,11 +169,12 @@ app.listen(PORT, '0.0.0.0', () => {
                     console.error(`[${new Date().toISOString()}] ${label} fetch failed:`, err.message);
                 }
             }
-            // Mon-Fri: Every 15 mins during market hours (9:15 AM - 3:30 PM IST = 3:45-10:00 UTC)
-            cron.schedule('*/15 3-10 * * 1-5', () => runFetchTask('Cron'));
-            cron.schedule('45 10 * * 1-5', () => runFetchTask('Post-market-1'));
-            cron.schedule('0 12 * * 1-5', () => runFetchTask('Post-market-2'));
-            console.log('[BOOT] ✅ Cron jobs scheduled');
+            // NSE FII/DII data publishes after market close (~6-7 PM IST)
+            // Run 3 targeted fetches during the publish window (IST = UTC+5:30)
+            cron.schedule('30 12 * * 1-5', () => runFetchTask('Post-market-1'));  // 6:00 PM IST
+            cron.schedule('0 13 * * 1-5',  () => runFetchTask('Post-market-2'));  // 6:30 PM IST
+            cron.schedule('30 13 * * 1-5', () => runFetchTask('Post-market-3'));  // 7:00 PM IST
+            console.log('[BOOT] ✅ Cron jobs scheduled (6:00, 6:30, 7:00 PM IST Mon-Fri)');
         } catch (e) {
             console.error('[BOOT] Cron scheduling failed:', e.message);
         }
