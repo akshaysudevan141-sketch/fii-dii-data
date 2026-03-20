@@ -4,8 +4,8 @@
   "description": "Institutional-grade FII & DII flow analytics for Indian equity markets. Live NSE data, derivatives tracking, heatmaps & more.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F1EEE8",
-  "theme_color": "#F1EEE8",
+  "background_color": "#F5F7FA",
+  "theme_color": "#2563EB",
   "orientation": "any",
   "categories": ["finance", "business"],
   "icons": [

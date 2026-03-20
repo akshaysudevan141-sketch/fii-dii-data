@@ -3,7 +3,9 @@ name: 📊 Auto-Update FII & DII Data
 on:
   schedule:
     # 12:30 UTC = 6:00 PM IST — NSE publishes data after market close (3:30 PM IST)
-    - cron: '30 12 * * 1-5'   # Monday–Friday only
+    - cron: '15 10 * * 1-5'   # 3:45 PM IST (Right after market close)
+    - cron: '30 12 * * 1-5'   # 6:00 PM IST (Primary publish window)
+    - cron: '00 13 * * 1-5'   # 6:30 PM IST (Secondary publish window fallback)
   workflow_dispatch:            # Allow manual trigger from GitHub Actions tab
 
 jobs:
