@@ -65,8 +65,13 @@ app.use(express.static(path.join(__dirname, '.'), {
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 
-// Dashboard
+// Homepage
 app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// FII DII Full Dashboard
+app.get('/fii-dii', (req, res) => {
     res.sendFile(path.join(__dirname, 'fii_dii_india_flows_dashboard.html'));
 });
 
