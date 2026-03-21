@@ -35,7 +35,7 @@ jobs:
         run: node -e "require('./scripts/fetch_data').fetchMarketStats()"
         continue-on-error: true
 
-      - name: 🌐 Fetch Sector Returns
+      - name: 🔄 Fetch Sector Returns
         id: fetchsectors
         run: node scripts/fetch_sectors.js
         continue-on-error: true

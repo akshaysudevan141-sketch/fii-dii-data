@@ -151,7 +151,7 @@ app.get('/api/market', async (req, res) => {
     }
 });
 
-// ── NSE Market Statistics — reads from file saved by GitHub Actions ───────────
+// NSE Market Statistics — reads from file saved by GitHub Actions
 app.get('/api/market-stats', (req, res) => {
     try {
         const filePath = path.join(__dirname, 'data', 'market-stats.json');
@@ -164,6 +164,23 @@ app.get('/api/market-stats', (req, res) => {
         res.json(data);
     } catch (err) {
         console.error('❌ Market stats read error:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ── Sector Returns — reads from file saved by GitHub Actions ─────────────────
+app.get('/api/sector-returns', (req, res) => {
+    try {
+        const filePath = path.join(__dirname, 'data', 'sector-returns.json');
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({
+                error: 'Sector data not available yet — GitHub Actions fetches this daily after market close'
+            });
+        }
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        res.json(data);
+    } catch (err) {
+        console.error('❌ Sector returns read error:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
@@ -199,13 +216,6 @@ app.listen(PORT, '0.0.0.0', () => {
     } else {
         console.warn('[BOOT] ⚠ node-cron not available, skipping scheduler');
     }
-});
-app.get('/api/sector-returns', (req, res) => {
-    try {
-        const filePath = path.join(__dirname, 'data', 'sector-returns.json');
-        if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'Not available yet' });
-        res.json(JSON.parse(fs.readFileSync(filePath, 'utf8')));
-    } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 module.exports = app;
