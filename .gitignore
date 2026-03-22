@@ -24,3 +24,5 @@ __pycache__/
 # Secrets / environment
 .env
 .env.local
+scripts/.fetch_sectors.py.swp
+scripts/trading_env/
