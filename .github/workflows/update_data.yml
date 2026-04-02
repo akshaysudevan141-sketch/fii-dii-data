@@ -3,10 +3,11 @@ name: 📊 Auto-Update FII & DII Data
 on:
   schedule:
     # FII/DII Data + Market Stats — after market close (UTC times)
-    - cron: '15 10 * * 1-5'   # 3:45 PM IST
-    - cron: '30 12 * * 1-5'   # 6:00 PM IST
-    - cron: '00 13 * * 1-5'   # 6:30 PM IST
-    # NOTE: Sector Rotation handled by Ubuntu server cron (every 30 min 9AM-4PM IST)
+    - cron: '0,30 3-10 * * 1-5'   # Every 30 min during market hours
+    - cron: '15 10 * * 1-5'        # After market close
+    - cron: '30 12 * * 1-5'        # Evening update
+    - cron: '00 13 * * 1-5'        # Evening update
+    # NOTE: Sector Rotation now handled by GitHub Actions (step below)
   workflow_dispatch:
 
 jobs:
@@ -31,6 +32,11 @@ jobs:
       - name: 📡 Fetch FII & DII Data
         id: fetch
         run: npm run fetch
+        continue-on-error: true
+
+      - name: 🔄 Fetch Sector Rotation
+        id: fetchsectors
+        run: python3 scripts/fetch_sectors.py
         continue-on-error: true
 
       - name: 📊 Fetch NSE Market Statistics
