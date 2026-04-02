@@ -1,11 +1,10 @@
 name: 📊 Auto-Update FII & DII Data
 on:
   schedule:
-    - cron: '0,30 3-10 * * 1-5'   # Every 30 min during market hours
-    - cron: '15 10 * * 1-5'        # After market close
-    - cron: '30 12 * * 1-5'        # Evening update
-    - cron: '00 13 * * 1-5'        # Evening update
-    # NOTE: Sector Rotation now handled by GitHub Actions (step below)
+    - cron: '0,30 3-10 * * 1-5'
+    - cron: '15 10 * * 1-5'
+    - cron: '30 12 * * 1-5'
+    - cron: '00 13 * * 1-5'
   workflow_dispatch:
 jobs:
   update-data:
@@ -15,30 +14,38 @@ jobs:
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
+
       - name: 🟢 Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: 'npm'
+
       - name: 📦 Install dependencies
         run: npm install
+
       - name: 📡 Fetch FII & DII Data
         id: fetch
         run: npm run fetch
         continue-on-error: true
+
       - name: 🔄 Fetch Sector Rotation
         id: fetchsectors
         run: python3 scripts/fetch_sectors.py
         continue-on-error: true
+
       - name: 📊 Fetch NSE Market Statistics
         id: fetchstats
         run: node -e "require('./scripts/fetch_data').fetchMarketStats()"
         continue-on-error: true
+
       - name: 💾 Commit updated data
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add data/
-          git diff --staged --quiet || git commit -m "📊 Auto-update: $(date +'%d-%b-%Y %H:%M IST')"
+          git stash
           git pull --rebase origin main
+          git stash pop
+          git diff --staged --quiet || git commit -m "📊 Auto-update: $(date +'%d-%b-%Y %H:%M IST')"
           git push
