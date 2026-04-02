@@ -232,7 +232,7 @@ function fmtRet(v, maxAbs) {
   const bar = v > 0
     ? `<div class="ret-bar-pos" style="width:${barW}%"></div>`
     : v < 0 ? `<div class="ret-bar-neg" style="width:${barW}%"></div>` : '';
-  return `${bar}<span class="${cls}">${v > 0 ? '+' : ''}${v.toFixed(1)}%</span>`;
+  return `${bar}<span class="${cls}">${v > 0 ? '+' : ''}${v.toFixed(2)}%</span>`;
 }
 
 function sigBadge(s) {
@@ -317,12 +317,12 @@ function renderHero() {
     const best = sorted1d[0];
     setText('statBest', best.name);
     const el = document.getElementById('statBestPct');
-    if (el) { el.textContent = (best.r1d>0?'+':'')+best.r1d?.toFixed(1)+'% today'; el.style.color = best.r1d>=0?'var(--green)':'var(--red)'; }
+    if (el) { el.textContent = (best.r1d>0?'+':'')+best.r1d?.toFixed(2)+'% today'; el.style.color = best.r1d>=0?'var(--green)':'var(--red)'; }
   }
 
   const ranked = [..._data].filter(s=>s.rsRank!==null).sort((a,b)=>a.rsRank-b.rsRank);
-  const fmt1d = s => `<span class="${(s.r1d||0)>=0?'pos':'neg'}" style="font-family:var(--mono);font-size:11px">${(s.r1d||0)>=0?'+':''}${(s.r1d||0).toFixed(1)}%</span>`;
-  const fmt1m = s => `<span class="${(s.r1m||0)>=0?'pos':'neg'}" style="font-family:var(--mono);font-size:11px">${(s.r1m||0)>=0?'+':''}${(s.r1m||0).toFixed(1)}%</span>`;
+  const fmt1d = s => `<span class="${(s.r1d||0)>=0?'pos':'neg'}" style="font-family:var(--mono);font-size:11px">${(s.r1d||0)>=0?'+':''}${(s.r1d||0).toFixed(2)}%</span>`;
+  const fmt1m = s => `<span class="${(s.r1m||0)>=0?'pos':'neg'}" style="font-family:var(--mono);font-size:11px">${(s.r1m||0)>=0?'+':''}${(s.r1m||0).toFixed(2)}%</span>`;
 
   const topEl = document.getElementById('topSectors');
   if (topEl) topEl.innerHTML = ranked.slice(0,5).map(s=>`
