@@ -1,5 +1,5 @@
 {
-  "_updated_at": "2026-04-03T08:42:19.209981+00:00",
+  "_updated_at": "2026-04-03T09:43:58.951523+00:00",
   "_source": "NSE allIndices (1D/1W/1M/1Y) + niftyindices.com (3M = 63 trading days)",
   "_note": "1D=NSE percentChange | 1W=(last-1wkAgo)/1wkAgo | 1M=NSE perChange30d | 3M=niftyindices 63td | 1Y=NSE perChange365d",
   "sectors": [
@@ -81,7 +81,7 @@
       "r1d": 0.04,
       "r1w": -1.74,
       "r1m": -6.93,
-      "r3m": -0.57,
+      "r3m": 185.28,
       "r1y": 17.59,
       "rsRank": 10,
       "rrg": "Neutral",
