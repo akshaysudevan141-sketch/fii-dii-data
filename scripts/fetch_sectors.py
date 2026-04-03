@@ -12,7 +12,7 @@
 # RS Rank, RRG Quadrant, Signal — auto-calculated
 # ─────────────────────────────────────────────────────────────────────────────
 
-import urllib.request, json, os, time, requests
+import urllib.request, json, os, time, requests, calendar
 from datetime import datetime, timezone, timedelta
 
 IST = timezone(timedelta(hours=5, minutes=30))
@@ -55,13 +55,24 @@ def fmt(v):
     return 'N/A' if v is None else f"{'+'if v>=0 else ''}{v:.2f}%"
 
 def add_months(dt, months):
-    """Add calendar months to a datetime (no external deps needed)."""
+    """Subtract/add calendar months without external deps."""
     month = dt.month - 1 + months
     year  = dt.year + month // 12
     month = month % 12 + 1
-    import calendar
-    day = min(dt.day, calendar.monthrange(year, month)[1])
+    day   = min(dt.day, calendar.monthrange(year, month)[1])
     return dt.replace(year=year, month=month, day=day)
+
+def parse_nifty_date(raw):
+    """Try every known niftyindices date format. Returns datetime or None."""
+    raw = str(raw).strip()
+    for fmt in ('%d %b %Y', '%d-%b-%Y', '%Y-%m-%d', '%d/%m/%Y', '%m/%d/%Y',
+                '%d %b %Y', '%b %d, %Y', '%d-%B-%Y', '%d %B %Y'):
+        try:
+            return datetime.strptime(raw, fmt)
+        except ValueError:
+            continue
+    # last resort: try splitting on common separators
+    return None
 
 # ── Fetch NSE allIndices ──────────────────────────────────────────────────
 def fetch_nse_all():
@@ -92,14 +103,14 @@ def fetch_1w_and_3m(sectors_data):
         print(f'  ⚠️  Session failed: {e}')
         return
 
-    today = datetime.now()
-
-    # 3 calendar months ago target (no external lib needed)
+    today     = datetime.now()
     target_3m = add_months(today, -3)
+    print(f'  📅 3M target date: {target_3m.strftime("%d-%b-%Y")}')
 
-    # Fetch 110 calendar days — enough for ~75 trading days (covers 3M + buffer)
+    # Fetch 110 calendar days — covers ~75 trading days (3M + buffer for 1W)
     from_date = (today - timedelta(days=110)).strftime('%b %d %Y')
     to_date   = today.strftime('%b %d %Y')
+
 
     for s in sectors_data:
         ni_name = next((x['ni'] for x in SECTORS if x['name'] == s['name']), None)
@@ -130,6 +141,7 @@ def fetch_1w_and_3m(sectors_data):
                 time.sleep(1)
                 continue
 
+
             # hist[0] = most recent trading day (newest first)
             current_close = safe_float(hist[0]['CLOSE'])
             if not current_close:
@@ -141,23 +153,22 @@ def fetch_1w_and_3m(sectors_data):
             s['r1w'] = pct(current_close, close_1w)
 
             # ── 3M: find first row whose date <= 3 calendar months ago ───
-            # hist is newest-first, so iterate and stop at first match
-            close_3m = None
+            # hist is newest-first; stop at first match going backwards
+            close_3m    = None
             date_3m_str = None
             for row in hist:
-                raw_date = row.get('HistoricalDate', '').strip()
-                try:
-                    # niftyindices format: "03-Apr-2026" or "3-Apr-2026"
-                    row_date = datetime.strptime(raw_date, '%d-%b-%Y')
-                except ValueError:
-                    try:
-                        row_date = datetime.strptime(raw_date, '%Y-%m-%d')
-                    except:
-                        continue
-                if row_date <= target_3m:
+                raw_date  = row.get('HistoricalDate', '')
+                row_date  = parse_nifty_date(raw_date)
+                if row_date and row_date <= target_3m:
                     close_3m    = safe_float(row['CLOSE'])
                     date_3m_str = raw_date
                     break
+
+            # ── Fallback: if date parse still fails, use index 65 ────────
+            if close_3m is None:
+                idx = min(65, len(hist) - 1)
+                close_3m    = safe_float(hist[idx]['CLOSE'])
+                date_3m_str = f"idx={idx} ({hist[idx].get('HistoricalDate','')})"
 
             s['r3m'] = pct(current_close, close_3m)
 
@@ -165,7 +176,7 @@ def fetch_1w_and_3m(sectors_data):
                 f"  ✅ {s['name'].ljust(16)}"
                 f"  1W:{fmt(s['r1w']).rjust(8)}"
                 f"  3M:{fmt(s['r3m']).rjust(8)}"
-                + (f"  (vs {date_3m_str})" if date_3m_str else '  (3M date not found)')
+                f"  (vs {date_3m_str})"
             )
             time.sleep(1)
 
