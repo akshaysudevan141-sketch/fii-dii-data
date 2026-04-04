@@ -211,6 +211,16 @@ app.get('/api/commodity-proxy', async (req, res) => {
     }
 });
 
+// Commodity static files
+app.get('/style.css', (req, res) => {
+    res.sendFile(path.join(__dirname, 'style.css'));
+});
+
+app.get('/app.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'app.js'));
+});
+
+
 // Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', ts: new Date().toISOString() });
