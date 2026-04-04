@@ -220,6 +220,10 @@ app.get('/app.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'app.js'));
 });
 
+app.get('/docs.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'docs.html'));
+});
+
 
 // Commodity static files
 app.get('/commodity-style.css', (req, res) => {
