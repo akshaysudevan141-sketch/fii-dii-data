@@ -189,6 +189,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <button class="sidebar-item" id="sb-sectors" onclick="openDash('/sector-rotation','Sector Rotation')">
         <span class="sidebar-icon">🔄</span> Sector Rotation
       </button>
+      <button class="sidebar-item" id="sb-commodity" onclick="openDash('/commodity.html','Commodity Prices')">
+        <span class="sidebar-icon">🥇</span> Commodity Prices
+      </button>
     </div>
     <div class="sidebar-section">
       <span class="sidebar-section-label">Market Data</span>
@@ -304,6 +307,21 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
           </div>
         </button>
 
+        <!-- Commodity Prices Card -->
+        <button class="dash-card" onclick="openDash('/commodity.html','Commodity Prices')" style="border-color:rgba(167,139,250,0.2)!important;background:linear-gradient(135deg,var(--card),rgba(167,139,250,0.03))!important;">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),transparent);"></div>
+          <div class="card-top">
+            <div class="card-icon">🥇</div>
+            <div><div class="card-title">Commodity Price Tracker</div><div class="card-sub">Gold · Silver · Crude · Metals</div></div>
+          </div>
+          <div class="card-desc">Live India commodity prices — Gold, Silver, Crude Oil & Base Metals with Import Landed Price calculations in INR.</div>
+          <div class="card-footer">
+            <span class="tag tag-source">COMEX / LME</span>
+            <span class="tag tag-live">Live</span>
+            <span class="tag" style="color:var(--purple);border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.08);">INR Calc</span>
+          </div>
+        </button>
+
         <!-- Flow History Card -->
         <button class="dash-card" onclick="openDash('/fii_dii_india_flows_dashboard.html','Flow History')">
           <div class="card-top">
@@ -403,6 +421,9 @@ function openDash(url, title) {
   if (url.includes('sector')) {
     document.getElementById('navSector')?.classList.add('active');
     document.getElementById('sb-sectors')?.classList.add('active');
+  } else if (url.includes('commodity')) {
+    document.getElementById('navDash')?.classList.add('active');
+    document.getElementById('sb-commodity')?.classList.add('active');
   } else {
     document.getElementById('navDash')?.classList.add('active');
     document.getElementById('sb-fiidii')?.classList.add('active');
