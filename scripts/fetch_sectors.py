@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 # scripts/fetch_sectors.py
 # ─────────────────────────────────────────────────────────────────────────────
-# 100% NSE data — accurate sector rotation calculations
-#
-#   1D  = percentChange                          ← NSE allIndices (direct)
-#   1W  = hist[5] close (5 trading days)         ← niftyindices.com historical
-#   1M  = perChange30d                           ← NSE allIndices (direct)
-#   3M  = close on/before 3 calendar months ago  ← niftyindices.com historical
-#   1Y  = perChange365d                          ← NSE allIndices (direct)
-#
-# RS Rank, RRG Quadrant, Signal — auto-calculated
+#   1D  = percentChange    ← NSE allIndices (direct)
+#   1W  = calendar 7 days  ← niftyindices.com (matches NSE index tracker)
+#   1M  = perChange30d     ← NSE allIndices (direct)
+#   3M  = calendar 3 months← niftyindices.com (matches NSE index tracker)
+#   1Y  = perChange365d    ← NSE allIndices (direct)
 # ─────────────────────────────────────────────────────────────────────────────
 
 import urllib.request, json, os, time, requests, calendar
@@ -18,28 +14,28 @@ from datetime import datetime, timezone, timedelta
 IST = timezone(timedelta(hours=5, minutes=30))
 
 SECTORS = [
-    { 'name': 'Auto',          'nse': 'NIFTY AUTO',            'ni': 'NIFTY AUTO'               },
-    { 'name': 'Banking',       'nse': 'NIFTY BANK',            'ni': 'NIFTY BANK'               },
-    { 'name': 'Commodities',   'nse': 'NIFTY COMMODITIES',     'ni': 'NIFTY COMMODITIES'        },
-    { 'name': 'Cons Durables', 'nse': 'NIFTY CONSR DURBL',     'ni': 'NIFTY CONSR DURBL'        },
-    { 'name': 'Consumption',   'nse': 'NIFTY CONSUMPTION',     'ni': 'NIFTY CONSUMPTION'        },
-    { 'name': 'Defence',       'nse': 'NIFTY IND DEFENCE',     'ni': 'NIFTY INDIA DEFENCE'      },
-    { 'name': 'Energy',        'nse': 'NIFTY ENERGY',          'ni': 'NIFTY ENERGY'             },
-    { 'name': 'Finance',       'nse': 'NIFTY FIN SERVICE',     'ni': 'NIFTY FIN SERVICE'        },
-    { 'name': 'FMCG',          'nse': 'NIFTY FMCG',            'ni': 'NIFTY FMCG'               },
-    { 'name': 'Healthcare',    'nse': 'NIFTY HEALTHCARE INDEX', 'ni': 'NIFTY HEALTHCARE'         },
-    { 'name': 'Infra',         'nse': 'NIFTY INFRASTRUCTURE',  'ni': 'NIFTY INFRA'              },
-    { 'name': 'IT',            'nse': 'NIFTY IT',              'ni': 'NIFTY IT'                 },
-    { 'name': 'Media',         'nse': 'NIFTY MEDIA',           'ni': 'NIFTY MEDIA'              },
-    { 'name': 'Metal',         'nse': 'NIFTY METAL',           'ni': 'NIFTY METAL'              },
-    { 'name': 'OilGas',        'nse': 'NIFTY OIL AND GAS',     'ni': 'NIFTY OIL AND GAS'        },
-    { 'name': 'Pharma',        'nse': 'NIFTY PHARMA',          'ni': 'NIFTY PHARMA'             },
-    { 'name': 'PSE',           'nse': 'NIFTY PSE',             'ni': 'NIFTY PSE'                },
-    { 'name': 'PSUBank',       'nse': 'NIFTY PSU BANK',        'ni': 'NIFTY PSU BANK'           },
-    { 'name': 'PVTBank',       'nse': 'NIFTY PVT BANK',        'ni': 'NIFTY PVT BANK'           },
-    { 'name': 'Realty',        'nse': 'NIFTY REALTY',          'ni': 'NIFTY REALTY'             },
-    { 'name': 'Service',       'nse': 'NIFTY SERV SECTOR',     'ni': 'NIFTY SERV SECTOR'        },
-    { 'name': 'SmallCap',      'nse': 'NIFTY SMLCAP 100',      'ni': 'NIFTY SMLCAP 100'         },
+    { 'name': 'Auto',          'nse': 'NIFTY AUTO',            'ni': 'NIFTY AUTO'            },
+    { 'name': 'Banking',       'nse': 'NIFTY BANK',            'ni': 'NIFTY BANK'            },
+    { 'name': 'Commodities',   'nse': 'NIFTY COMMODITIES',     'ni': 'NIFTY COMMODITIES'     },
+    { 'name': 'Cons Durables', 'nse': 'NIFTY CONSR DURBL',     'ni': 'NIFTY CONSR DURBL'     },
+    { 'name': 'Consumption',   'nse': 'NIFTY CONSUMPTION',     'ni': 'NIFTY CONSUMPTION'     },
+    { 'name': 'Defence',       'nse': 'NIFTY IND DEFENCE',     'ni': 'NIFTY INDIA DEFENCE'   },
+    { 'name': 'Energy',        'nse': 'NIFTY ENERGY',          'ni': 'NIFTY ENERGY'          },
+    { 'name': 'Finance',       'nse': 'NIFTY FIN SERVICE',     'ni': 'NIFTY FIN SERVICE'     },
+    { 'name': 'FMCG',          'nse': 'NIFTY FMCG',            'ni': 'NIFTY FMCG'            },
+    { 'name': 'Healthcare',    'nse': 'NIFTY HEALTHCARE INDEX', 'ni': 'NIFTY HEALTHCARE'      },
+    { 'name': 'Infra',         'nse': 'NIFTY INFRASTRUCTURE',  'ni': 'NIFTY INFRA'           },
+    { 'name': 'IT',            'nse': 'NIFTY IT',              'ni': 'NIFTY IT'              },
+    { 'name': 'Media',         'nse': 'NIFTY MEDIA',           'ni': 'NIFTY MEDIA'           },
+    { 'name': 'Metal',         'nse': 'NIFTY METAL',           'ni': 'NIFTY METAL'           },
+    { 'name': 'OilGas',        'nse': 'NIFTY OIL AND GAS',     'ni': 'NIFTY OIL AND GAS'    },
+    { 'name': 'Pharma',        'nse': 'NIFTY PHARMA',          'ni': 'NIFTY PHARMA'          },
+    { 'name': 'PSE',           'nse': 'NIFTY PSE',             'ni': 'NIFTY PSE'             },
+    { 'name': 'PSUBank',       'nse': 'NIFTY PSU BANK',        'ni': 'NIFTY PSU BANK'        },
+    { 'name': 'PVTBank',       'nse': 'NIFTY PVT BANK',        'ni': 'NIFTY PVT BANK'        },
+    { 'name': 'Realty',        'nse': 'NIFTY REALTY',          'ni': 'NIFTY REALTY'          },
+    { 'name': 'Service',       'nse': 'NIFTY SERV SECTOR',     'ni': 'NIFTY SERV SECTOR'     },
+    { 'name': 'SmallCap',      'nse': 'NIFTY SMLCAP 100',      'ni': 'NIFTY SMLCAP 100'      },
 ]
 
 def safe_float(v):
@@ -55,7 +51,6 @@ def fmt(v):
     return 'N/A' if v is None else f"{'+'if v>=0 else ''}{v:.2f}%"
 
 def add_months(dt, months):
-    """Subtract/add calendar months without external deps."""
     month = dt.month - 1 + months
     year  = dt.year + month // 12
     month = month % 12 + 1
@@ -63,15 +58,13 @@ def add_months(dt, months):
     return dt.replace(year=year, month=month, day=day)
 
 def parse_nifty_date(raw):
-    """Try every known niftyindices date format. Returns datetime or None."""
     raw = str(raw).strip()
-    for fmt in ('%d %b %Y', '%d-%b-%Y', '%Y-%m-%d', '%d/%m/%Y', '%m/%d/%Y',
-                '%d %b %Y', '%b %d, %Y', '%d-%B-%Y', '%d %B %Y'):
+    for fmt in ('%d %b %Y', '%d-%b-%Y', '%Y-%m-%d', '%d/%m/%Y',
+                '%m/%d/%Y', '%b %d, %Y', '%d-%B-%Y', '%d %B %Y'):
         try:
             return datetime.strptime(raw, fmt)
         except ValueError:
             continue
-    # last resort: try splitting on common separators
     return None
 
 # ── Fetch NSE allIndices ──────────────────────────────────────────────────
@@ -89,9 +82,9 @@ def fetch_nse_all():
         data = json.loads(res.read().decode('utf-8'))
     return {(d.get('indexSymbol') or '').upper().strip(): d for d in data.get('data', [])}
 
-# ── Fetch 1W + 3M from niftyindices.com ──────────────────────────────────
+# ── Fetch 1W + 3M from niftyindices using calendar lookback ──────────────
 def fetch_1w_and_3m(sectors_data):
-    print('\n📈 Fetching 1W + 3M from niftyindices.com...')
+    print('\n📈 Fetching 1W + 3M from niftyindices.com (calendar lookback)...')
     try:
         session = requests.Session()
         session.headers.update({
@@ -104,13 +97,14 @@ def fetch_1w_and_3m(sectors_data):
         return
 
     today     = datetime.now()
+    # Calendar lookbacks — matches NSE index tracker exactly
+    target_1w = today - timedelta(days=7)
     target_3m = add_months(today, -3)
-    print(f'  📅 3M target date: {target_3m.strftime("%d-%b-%Y")}')
+    print(f'  📅 1W target: {target_1w.strftime("%d-%b-%Y")}  |  3M target: {target_3m.strftime("%d-%b-%Y")}')
 
-    # Fetch 110 calendar days — covers ~75 trading days (3M + buffer for 1W)
+    # 110 days covers both 1W and 3M
     from_date = (today - timedelta(days=110)).strftime('%b %d %Y')
     to_date   = today.strftime('%b %d %Y')
-
 
     for s in sectors_data:
         ni_name = next((x['ni'] for x in SECTORS if x['name'] == s['name']), None)
@@ -141,42 +135,37 @@ def fetch_1w_and_3m(sectors_data):
                 time.sleep(1)
                 continue
 
-
-            # hist[0] = most recent trading day (newest first)
             current_close = safe_float(hist[0]['CLOSE'])
             if not current_close:
                 time.sleep(1)
                 continue
 
-            # ── 1W: 5 trading days back (index 5) ────────────────────────
-            close_1w = safe_float(hist[min(5, len(hist)-1)]['CLOSE'])
+            # ── Find close on/before target date ─────────────────────────
+            def find_close(target):
+                for row in hist:
+                    row_date = parse_nifty_date(row.get('HistoricalDate', ''))
+                    if row_date and row_date <= target:
+                        return safe_float(row['CLOSE']), row.get('HistoricalDate', '')
+                return None, None
+
+            # 1W — calendar 7 days (matches NSE index tracker)
+            close_1w, date_1w = find_close(target_1w)
+            if close_1w is None:
+                close_1w = safe_float(hist[min(5, len(hist)-1)]['CLOSE'])
             s['r1w'] = pct(current_close, close_1w)
 
-            # ── 3M: find first row whose date <= 3 calendar months ago ───
-            # hist is newest-first; stop at first match going backwards
-            close_3m    = None
-            date_3m_str = None
-            for row in hist:
-                raw_date  = row.get('HistoricalDate', '')
-                row_date  = parse_nifty_date(raw_date)
-                if row_date and row_date <= target_3m:
-                    close_3m    = safe_float(row['CLOSE'])
-                    date_3m_str = raw_date
-                    break
-
-            # ── Fallback: if date parse still fails, use index 65 ────────
+            # 3M — calendar 3 months
+            close_3m, date_3m = find_close(target_3m)
             if close_3m is None:
-                idx = min(65, len(hist) - 1)
-                close_3m    = safe_float(hist[idx]['CLOSE'])
-                date_3m_str = f"idx={idx} ({hist[idx].get('HistoricalDate','')})"
-
+                idx = min(65, len(hist)-1)
+                close_3m = safe_float(hist[idx]['CLOSE'])
+                date_3m  = hist[idx].get('HistoricalDate', '')
             s['r3m'] = pct(current_close, close_3m)
 
             print(
                 f"  ✅ {s['name'].ljust(16)}"
-                f"  1W:{fmt(s['r1w']).rjust(8)}"
-                f"  3M:{fmt(s['r3m']).rjust(8)}"
-                f"  (vs {date_3m_str})"
+                f"  1W:{fmt(s['r1w']).rjust(8)} (vs {date_1w})"
+                f"  3M:{fmt(s['r3m']).rjust(8)} (vs {date_3m})"
             )
             time.sleep(1)
 
@@ -214,9 +203,8 @@ def fetch_sectors():
     print('━' * 65)
     print(f'🔄 NSE Sector Rotation — {day_name} {now_ist.strftime("%Y-%m-%d %H:%M")} IST')
     print('   1D / 1M / 1Y → NSE allIndices (direct)')
-    print('   1W            → niftyindices hist[5] (5 trading days)')
+    print('   1W            → niftyindices calendar 7-day lookback (matches NSE tracker)')
     print('   3M            → niftyindices calendar 3-month lookback')
-    print('   RS Rank / RRG / Signal → auto-calculated')
     print('━' * 65 + '\n')
 
     # Step 1: NSE allIndices
@@ -228,7 +216,7 @@ def fetch_sectors():
         print(f'   ❌ Failed: {e}')
         write_output([]); return
 
-    # Step 2: Extract each sector
+    # Step 2: Extract 1D, 1M, 1Y directly
     sectors = []
     for s in SECTORS:
         nse_sym = s['nse'].upper().strip()
@@ -243,10 +231,9 @@ def fetch_sectors():
             r1d     = safe_float(found.get('percentChange'))
             r1m     = safe_float(found.get('perChange30d')) or pct(current, safe_float(found.get('oneMonthAgoVal')))
             r1y     = safe_float(found.get('perChange365d'))
-
             entry = {
                 'name':     s['name'],
-                'source':   'NSE+niftyindices',
+                'source':   'NSE allIndices + niftyindices',
                 'last':     current,
                 'lastDate': found.get('previousDay', now_ist.strftime('%d-%b-%Y')),
                 'r1d': r1d, 'r1w': None, 'r1m': r1m, 'r3m': None, 'r1y': r1y,
@@ -255,10 +242,10 @@ def fetch_sectors():
             print(f"  ✅ {s['name'].ljust(16)}  1D:{fmt(r1d).rjust(8)}  1M:{fmt(r1m).rjust(8)}  1Y:{fmt(r1y).rjust(8)}")
         else:
             print(f"  ⚠️  {s['name'].ljust(16)} NOT FOUND")
-            sectors.append({'name':s['name'],'source':'NSE+niftyindices','last':None,'lastDate':None,
+            sectors.append({'name':s['name'],'source':'NSE','last':None,'lastDate':None,
                             'r1d':None,'r1w':None,'r1m':None,'r3m':None,'r1y':None})
 
-    # Step 3: 1W + 3M from niftyindices
+    # Step 3: 1W + 3M from niftyindices calendar lookback
     fetch_1w_and_3m(sectors)
 
     # Step 4: RS Rank, RRG, Signal
@@ -285,8 +272,8 @@ def fetch_sectors():
 def write_output(sectors):
     out = {
         '_updated_at': datetime.now(timezone.utc).isoformat(),
-        '_source':     'NSE allIndices (1D/1M/1Y) + niftyindices.com (1W=5td, 3M=calendar)',
-        '_note':       '1D=NSE percentChange | 1W=niftyindices hist[5] | 1M=NSE perChange30d | 3M=niftyindices calendar | 1Y=NSE perChange365d',
+        '_source':     'NSE allIndices (1D/1M/1Y) + niftyindices (1W=7d calendar, 3M=3mo calendar)',
+        '_note':       'Calendar lookbacks match NSE index tracker exactly',
         'sectors':     sectors
     }
     out_dir  = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data')
