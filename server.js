@@ -221,6 +221,15 @@ app.get('/app.js', (req, res) => {
 });
 
 
+// Commodity static files
+app.get('/commodity-style.css', (req, res) => {
+    res.sendFile(path.join(__dirname, 'commodity-style.css'));
+});
+
+app.get('/commodity-app.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'commodity-app.js'));
+});
+
 // Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', ts: new Date().toISOString() });
