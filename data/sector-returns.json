@@ -1,5 +1,5 @@
 {
-  "_updated_at": "2026-04-09T14:22:41.697367+00:00",
+  "_updated_at": "2026-04-09T14:47:12.313581+00:00",
   "_source": "NSE allIndices (1D/1M/1Y) + niftyindices (1W=7d calendar, 3M=3mo calendar)",
   "_note": "Calendar lookbacks match NSE index tracker exactly",
   "sectors": [
@@ -37,9 +37,9 @@
       "last": 9679.7,
       "lastDate": "27-Mar-2026",
       "r1d": 0.37,
-      "r1w": null,
+      "r1w": 5.02,
       "r1m": 1.74,
-      "r3m": null,
+      "r3m": 3.34,
       "r1y": 21.92,
       "rsRank": 5,
       "rrg": "Leading",
@@ -177,13 +177,13 @@
       "last": 1338.95,
       "lastDate": "27-Mar-2026",
       "r1d": -0.8,
-      "r1w": null,
+      "r1w": 2.73,
       "r1m": 0.54,
-      "r3m": null,
+      "r3m": -6.06,
       "r1y": -9.48,
       "rsRank": 9,
-      "rrg": "Neutral",
-      "signal": "HOLD"
+      "rrg": "Improving",
+      "signal": "ACCUMULATE"
     },
     {
       "name": "Metal",
@@ -303,9 +303,9 @@
       "last": 16566.0,
       "lastDate": "27-Mar-2026",
       "r1d": 0.17,
-      "r1w": null,
+      "r1w": 5.85,
       "r1m": 2.69,
-      "r3m": null,
+      "r3m": -4.15,
       "r1y": 8.58,
       "rsRank": 4,
       "rrg": "Leading",
