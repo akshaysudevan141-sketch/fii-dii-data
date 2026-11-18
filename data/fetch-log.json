@@ -1,5 +1,10 @@
 [
   {
+    "ts": "2026-11-18T20:58:44.865Z",
+    "success": false,
+    "error": "timeout of 25000ms exceeded"
+  },
+  {
     "ts": "2026-11-18T20:52:35.092Z",
     "success": false,
     "error": "Request failed with status code 522"
@@ -575,12 +580,6 @@
   },
   {
     "ts": "2026-10-21T08:05:11.926Z",
-    "success": true,
-    "date": "19-Oct-2026",
-    "action": "skipped"
-  },
-  {
-    "ts": "2026-10-20T17:35:00.424Z",
     "success": true,
     "date": "19-Oct-2026",
     "action": "skipped"
